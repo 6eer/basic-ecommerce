@@ -2,27 +2,15 @@
   "env": {
     "browser": true,
     "commonjs": true,
-    "es2021": true
+    "es2021": true,
+    "node": true
   },
-  "extends": "eslint:recommended",
+  "extends": ["eslint:recommended", "plugin:prettier/recommended"],
+  "plugins": ["prettier"],
   "parserOptions": {
     "ecmaVersion": "latest"
   },
-  "rules": {}
+  "rules": {
+    "prettier/prettier": "error"
+  }
 }
-
-//Estas son las opciones que elegi en la creacion luego de hacer la instalacion de la liberia y despues de correr: npm init @eslint/config
-
-// √ How would you like to use ESLint? · problems
-// √ What type of modules does your project use? · commonjs
-// √ Which framework does your project use? · none
-// √ Does your project use TypeScript? · No / Yes
-// √ Where does your code run? · browser
-// √ What format do you want your config file to be in? · JSON
-
-//Como correr eslint?
-// Para un file determinado: npx eslint your-file.js
-// Para un directorio determinado: npx eslint your-directory/
-// Para todos los archivos: npx eslint .
-
-// Se puede agregar al json en scripts algo como "lint": "eslint ." de manera tal correr eslint directamente con npm run lint
