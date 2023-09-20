@@ -1,0 +1,15 @@
+# Aca van los files que no uqeremos que se formateen. 
+node_modules 
+
+
+#Como formatear el proyecto:
+
+#npx prettier --write . is great for formatting everything.
+#npx prettier --write app/ to format a certain directory.
+#npx prettier --write app/components/Button.js to format a certain file.
+#npx prettier --write "app/**/*.test.js" to format all tests in a directory.
+#--check is like --write, but only checks that files are already formatted, rather than overwriting them
+
+#Se puede agregar al json en scripts algo como "format": "prettier --write ." de panera tal de formatear usando npm run format. 
+
+#npx se usa para ejecutar paquetes instalados localmente en el proyecto. 
