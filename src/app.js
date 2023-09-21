@@ -1,7 +1,4 @@
-//Este file se encarga de la configuracion de express
-
 const express = require("express");
-//const bodyParser = require("body-parser");
 const swaggerJsdoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
 
@@ -46,5 +43,3 @@ app.use(
 );
 
 module.exports = app;
-
-//para usar import exportas en el .json hay que agregar "type":"module", pero aca usamos requeire exports.
