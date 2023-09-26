@@ -1,12 +1,26 @@
 const express = require("express");
 const swaggerJsdoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
+const Country = require("./routes/Country");
+const User = require("./routes/User");
+const Product = require("./routes/Product");
+const Seller = require("./routes/Seller");
+const Cart = require("./routes/Cart");
 
 const app = express();
+
+//Middlewares
+app.use(express.json());
 
 app.get("/", (req, res) => {
   res.send("¡Hola, mundo!");
 });
+
+app.use(Country);
+app.use(User);
+app.use(Product);
+app.use(Seller);
+app.use(Cart);
 
 const options = {
   definition: {
