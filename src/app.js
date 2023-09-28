@@ -1,6 +1,7 @@
 const express = require("express");
 const swaggerJsdoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
+const path = require("path");
 const Country = require("./routes/Country");
 const User = require("./routes/User");
 const Product = require("./routes/Product");
@@ -11,10 +12,6 @@ const app = express();
 
 //Middlewares
 app.use(express.json());
-
-app.get("/", (req, res) => {
-  res.send("¡Hola, mundo!");
-});
 
 app.use(Country);
 app.use(User);
@@ -46,14 +43,10 @@ const options = {
       },
     ],
   },
-  apis: ["./routes/*.js"],
+  apis: [path.resolve(__dirname, "routes/*.js")],
 };
 
 const specs = swaggerJsdoc(options);
-app.use(
-  "/api-docs",
-  swaggerUi.serve,
-  swaggerUi.setup(specs, { explorer: true }),
-);
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
 
 module.exports = app;

@@ -1,12 +1,19 @@
 const Product = require("../models/Product");
 const Seller = require("../models/Seller");
 
+class HttpError extends Error {
+  constructor(message, statusCode) {
+    super(message);
+    this.statusCode = statusCode;
+  }
+}
+
 const getProducts = async (req, res) => {
   try {
     const products = await Product.findAll();
-    res.json(products);
+    return res.status(200).json(products);
   } catch (error) {
-    return res.status(500).json({ message: error.message });
+    return res.json({ message: error.message });
   }
 };
 
@@ -16,8 +23,9 @@ const createProduct = async (req, res) => {
 
     const seller = await Seller.findByPk(sellerId);
 
+    //This is further validation, once the middleware checks the correct format of the body request, I ensures that the Seller exists on the database.
     if (!seller) {
-      throw new Error("Seller does not exist");
+      throw new HttpError("Not a valid Seller", 400);
     }
 
     const newProduct = await Product.create({
@@ -28,9 +36,10 @@ const createProduct = async (req, res) => {
       sellerId: sellerId,
     });
 
-    res.json(newProduct);
+    return res.status(201).json(newProduct);
   } catch (error) {
-    return res.status(500).json({ message: error.message });
+    const statusCode = error.statusCode || 500;
+    return res.status(statusCode).json({ message: error.message });
   }
 };
 
@@ -40,12 +49,13 @@ const getProduct = async (req, res) => {
     const product = await Product.findByPk(id);
 
     if (!product) {
-      throw new Error("Product not found");
+      throw new HttpError("Product not found", 404);
     }
 
-    res.json(product);
+    return res.status(200).json(product);
   } catch (error) {
-    return res.status(500).json({ message: error.message });
+    const statusCode = error.statusCode || 500;
+    return res.status(statusCode).json({ message: error.message });
   }
 };
 
@@ -55,20 +65,23 @@ const updateProduct = async (req, res) => {
     const product = await Product.findByPk(id);
 
     if (!product) {
-      throw new Error("Product not found");
+      throw new HttpError("Product not found", 404);
     }
 
-    const { name, price, stock, description } = req.body;
+    const { name, price, stock, description, sellerId } = req.body;
+
     product.name = name;
     product.price = price;
     product.stock = stock;
     product.description = description;
+    product.sellerId = sellerId;
 
     await product.save();
 
-    res.json(product);
+    return res.status(200).json(product);
   } catch (error) {
-    return res.status(500).json({ message: error.message });
+    const statusCode = error.statusCode || 500;
+    return res.status(statusCode).json({ message: error.message });
   }
 };
 
@@ -79,7 +92,7 @@ const deleteProduct = async (req, res) => {
     const product = await Product.findByPk(id);
 
     if (!product) {
-      throw new Error("Product not found");
+      throw new HttpError("Product not found", 404);
     }
 
     await Product.destroy({
@@ -87,9 +100,12 @@ const deleteProduct = async (req, res) => {
         id: id,
       },
     });
-    res.status(200).json({ message: "The product was successfully removed" });
+    return res
+      .status(200)
+      .json({ message: "The product was successfully removed" });
   } catch (error) {
-    return res.status(500).json({ message: error.message });
+    const statusCode = error.statusCode || 500;
+    return res.status(statusCode).json({ message: error.message });
   }
 };
 
