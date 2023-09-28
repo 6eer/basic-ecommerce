@@ -70,10 +70,11 @@ const updateProduct = async (req, res) => {
 
     const { name, price, stock, description, sellerId } = req.body;
 
-    product.name = name;
-    product.price = price;
-    product.stock = stock;
-    product.description = description;
+    product.name = name !== undefined ? name : product.name;
+    product.price = price !== undefined ? price : product.price;
+    product.stock = stock !== undefined ? stock : product.stock;
+    product.description =
+      description !== undefined ? description : product.description;
     product.sellerId = sellerId;
 
     await product.save();

@@ -25,4 +25,15 @@ const productSchema = {
   required: ["sellerId"],
 };
 
-module.exports = productSchema;
+const productParamsSchema = {
+  type: "object",
+  properties: {
+    id: {
+      type: "integer",
+    },
+  },
+  required: ["id"],
+  additionalProperties: false,
+};
+
+module.exports = { productSchema, productParamsSchema };
