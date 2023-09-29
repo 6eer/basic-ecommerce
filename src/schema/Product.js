@@ -3,7 +3,7 @@ const productSchema = {
   properties: {
     name: {
       type: "string",
-      minLength: 0,
+      minLength: 1,
     },
     price: {
       type: "number",
@@ -22,7 +22,7 @@ const productSchema = {
       minimum: 1,
     },
   },
-  required: ["sellerId"],
+  required: ["sellerId", "name"],
 };
 
 const productParamsSchema = {
