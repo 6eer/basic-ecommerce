@@ -75,6 +75,73 @@
  *                   type: string
  *               example:
  *                 message: "Product not found"
+ *     ValidateRequestErrorMissing:
+ *         description: Bad Request. In the body of the request a property is missing that is required. The validation rejects the request.
+ *         content:
+ *          application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               errors:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     instancePath:
+ *                       type: string
+ *                     schemaPath:
+ *                       type: string
+ *                     keyword:
+ *                       type: string
+ *                     params:
+ *                       type: object
+ *                       properties:
+ *                         missingProperty:
+ *                           type: string
+ *                     message:
+ *                       type: string
+ *             example:
+ *               errors:
+ *                 - instancePath: ""
+ *                   schemaPath: "#/required"
+ *                   keyword: "required"
+ *                   params:
+ *                     missingProperty: "name"
+ *                   message: "must have required property 'name'"
+ *
+ *     ValidateRequestErrorType:
+ *         description: Bad Request. A parameter in the URL of the request does not comply with the type defined in the schema. The validation rejects the request.
+ *         content:
+ *          application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               errors:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     instancePath:
+ *                       type: string
+ *                     schemaPath:
+ *                       type: string
+ *                     keyword:
+ *                       type: string
+ *                     params:
+ *                       type: object
+ *                       properties:
+ *                         type:
+ *                           type: string
+ *                     message:
+ *                       type: string
+ *             example:
+ *               errors:
+ *                 - instancePath: "/id"
+ *                   schemaPath: "#/properties/id/type"
+ *                   keyword: "type"
+ *                   params:
+ *                     type: "integer"
+ *                   message: "must be integer"
  *
  * /products:
  *   get:
@@ -145,6 +212,35 @@
  *       500:
  *        $ref: '#/components/responses/InternalServerError'
  *
+ *       400:
+ *           description: Bad Request. In the body of the request, a required property is not present or a property does not have its correct data type. Validation rejects the request.
+ *           content:
+ *             application/json:
+ *               schema:
+ *                 oneOf:
+ *                   - $ref: '#/components/responses/ValidateRequestErrorMissing'
+ *                   - $ref: '#/components/responses/ValidateRequestErrorType'
+ *               examples:
+ *                 missingProperty:
+ *                   value:
+ *                     errors:
+ *                       - instancePath: ""
+ *                         schemaPath: "#/required"
+ *                         keyword: "required"
+ *                         params:
+ *                           missingProperty: "name"
+ *                         message: "must have required property 'name'"
+ *                 wrongType:
+ *                   value:
+ *                     errors:
+ *                       - instancePath: "/price"
+ *                         schemaPath: "#/properties/price/type"
+ *                         keyword: "type"
+ *                         params:
+ *                           type: "number"
+ *                         message: "should be number"
+ *
+ *
  * /products/:productId:
  *
  *   get:
@@ -166,8 +262,13 @@
  *                $ref: '#/components/schemas/Product'
  *       404:
  *        $ref: '#/components/responses/NotFoundError'
+ *
+ *       400:
+ *        $ref: '#/components/responses/ValidateRequestErrorType'
+ *
  *       500:
  *        $ref: '#/components/responses/InternalServerError'
+ *
  *
  *   put:
  *     summary: Update a product by id.
@@ -222,8 +323,37 @@
  *                     name:
  *                       type: string
  *                       example: "Name changed"
+ *       400:
+ *           description: Bad Request. In the body of the request, a required property is not present or a property does not have its correct data type. Validation rejects the request.
+ *           content:
+ *             application/json:
+ *               schema:
+ *                 oneOf:
+ *                   - $ref: '#/components/responses/ValidateRequestErrorMissing'
+ *                   - $ref: '#/components/responses/ValidateRequestErrorType'
+ *               examples:
+ *                 missingProperty:
+ *                   value:
+ *                     errors:
+ *                       - instancePath: ""
+ *                         schemaPath: "#/required"
+ *                         keyword: "required"
+ *                         params:
+ *                           missingProperty: "name"
+ *                         message: "must have required property 'name'"
+ *                 wrongType:
+ *                   value:
+ *                     errors:
+ *                       - instancePath: "/price"
+ *                         schemaPath: "#/properties/price/type"
+ *                         keyword: "type"
+ *                         params:
+ *                           type: "number"
+ *                         message: "should be number"
  *       404:
  *        $ref: '#/components/responses/NotFoundError'
+ *       406:
+ *        $ref: '#/components/responses/ValidateRequestErrorType'
  *       500:
  *        $ref: '#/components/responses/InternalServerError'
  *
@@ -249,6 +379,8 @@
  *                   type: string
  *               example:
  *                 message: "The product was successfully removed"
+ *       400:
+ *        $ref: '#/components/responses/ValidateRequestErrorType'
  *       404:
  *        $ref: '#/components/responses/NotFoundError'
  *       500:
