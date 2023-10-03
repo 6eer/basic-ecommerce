@@ -54,7 +54,7 @@
  *
  *   responses:
  *     InternalServerError:
- *         description: Internal Server Error. The server encountered an internal error.
+ *         description: Internal Server Error.
  *         content:
  *           application/json:
  *             schema:
@@ -65,7 +65,7 @@
  *               example:
  *                 message: "An unexpected server error has occurred"
  *     NotFoundError:
- *         description: Not found. The id does not match any product in the database.
+ *         description: Not found.
  *         content:
  *           application/json:
  *             schema:
@@ -76,7 +76,7 @@
  *               example:
  *                 message: "Product not found"
  *     ValidateRequestErrorMissing:
- *         description: Bad Request. In the body of the request a property is missing that is required. The validation rejects the request.
+ *         description: Bad Request.
  *         content:
  *          application/json:
  *           schema:
@@ -110,7 +110,7 @@
  *                   message: "must have required property 'name'"
  *
  *     ValidateRequestErrorType:
- *         description: Bad Request. A parameter in the URL of the request does not comply with the type defined in the schema. The validation rejects the request.
+ *         description: Bad Request.
  *         content:
  *          application/json:
  *           schema:
@@ -149,7 +149,7 @@
  *     tags: [Products]
  *     responses:
  *       200:
- *         description: Request was successful. Returning an array of products.
+ *         description: Request was successful.
  *         content:
  *           application/json:
  *             schema:
@@ -193,13 +193,13 @@
  *               - sellerId
  *     responses:
  *       201:
- *         description: Request was successful. Product created. Returning the new product.
+ *         description: Request was successful.
  *         content:
  *           application/json:
  *             schema:
  *                $ref: '#/components/schemas/Product'
  *       404:
- *         description: Not found. The idSeller does not match any Seller in the database.
+ *         description: Not found.
  *         content:
  *           application/json:
  *             schema:
@@ -213,7 +213,7 @@
  *        $ref: '#/components/responses/InternalServerError'
  *
  *       400:
- *           description: Bad Request. In the body of the request, a required property is not present or a property does not have its correct data type. Validation rejects the request.
+ *           description: Bad Request.
  *           content:
  *             application/json:
  *               schema:
@@ -241,7 +241,7 @@
  *                         message: "should be number"
  *
  *
- * /products/:productId:
+ * /products/{productId}:
  *
  *   get:
  *     summary: Get a product by id.
@@ -255,7 +255,7 @@
  *         description: The ID of the product to retrieve.
  *     responses:
  *       200:
- *         description: Request was successful. Returning the product.
+ *         description: Request was successful.
  *         content:
  *           application/json:
  *             schema:
@@ -312,7 +312,7 @@
  *               - sellerId
  *     responses:
  *       200:
- *         description: Request was successful. Returning the updated product.
+ *         description: Request was successful.
  *         content:
  *           application/json:
  *             schema:
@@ -324,7 +324,7 @@
  *                       type: string
  *                       example: "Name changed"
  *       400:
- *           description: Bad Request. In the body of the request, a required property is not present or a property does not have its correct data type. Validation rejects the request.
+ *           description: Bad Request.
  *           content:
  *             application/json:
  *               schema:
@@ -352,8 +352,6 @@
  *                         message: "should be number"
  *       404:
  *        $ref: '#/components/responses/NotFoundError'
- *       406:
- *        $ref: '#/components/responses/ValidateRequestErrorType'
  *       500:
  *        $ref: '#/components/responses/InternalServerError'
  *
@@ -369,7 +367,7 @@
  *         description: The ID of the product to update.
  *     responses:
  *       200:
- *         description:  Request was successful. The product was removed.
+ *         description:  Request was successful.
  *         content:
  *           application/json:
  *             schema:
