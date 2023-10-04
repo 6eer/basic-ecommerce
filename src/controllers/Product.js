@@ -70,6 +70,11 @@ const updateProduct = async (req, res) => {
 
     const { name, price, stock, description, sellerId } = req.body;
 
+    const seller = await Seller.findByPk(sellerId);
+    if (!seller) {
+      throw new HttpError("Seller not found", 400);
+    }
+
     product.name = name !== undefined ? name : product.name;
     product.price = price !== undefined ? price : product.price;
     product.stock = stock !== undefined ? stock : product.stock;

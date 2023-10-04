@@ -1,8 +1,15 @@
 const { Sequelize } = require("sequelize");
 
-const sequelize = new Sequelize("e-commerce", "postgres", "Ff40554989", {
-  host: "localhost",
-  dialect: "postgres",
-});
+console.log(process.env.DB_NAME);
+
+const sequelize = new Sequelize(
+  process.env.DB_NAME,
+  process.env.DB_ENGINE,
+  process.env.DB_PASSWORD,
+  {
+    host: process.env.DB_HOST,
+    dialect: process.env.DB_DIALECT,
+  },
+);
 
 module.exports = sequelize;

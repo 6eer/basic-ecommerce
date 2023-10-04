@@ -17,7 +17,7 @@ async function main() {
     });
 
     //{ alter: true }
-    await sequelize.authenticate({ alter: true });
+    await sequelize.authenticate();
     console.log(
       "Connection to the database has been established successfully.",
     );
@@ -30,3 +30,4 @@ async function main() {
 }
 
 main();
+//setupDatabase();

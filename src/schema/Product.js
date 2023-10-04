@@ -23,6 +23,7 @@ const productSchema = {
     },
   },
   required: ["sellerId", "name"],
+  additionalProperties: false,
 };
 
 const productParamsSchema = {
