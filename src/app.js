@@ -1,14 +1,23 @@
 const express = require("express");
-//const bodyParser = require("body-parser");
 const swaggerJsdoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
+const path = require("path");
+const Country = require("./routes/Country");
+const User = require("./routes/User");
+const Product = require("./routes/Product");
+const Seller = require("./routes/Seller");
+const Cart = require("./routes/Cart");
 
 const app = express();
-const port = 3000;
 
-app.get("/", (req, res) => {
-  res.send("¡Hola, mundo!");
-});
+//Middlewares
+app.use(express.json());
+
+app.use(Country);
+app.use(User);
+app.use(Product);
+app.use(Seller);
+app.use(Cart);
 
 const options = {
   definition: {
@@ -34,16 +43,10 @@ const options = {
       },
     ],
   },
-  apis: ["./routes/*.js"],
+  apis: [path.resolve(__dirname, "routes/*.js")],
 };
 
 const specs = swaggerJsdoc(options);
-app.use(
-  "/api-docs",
-  swaggerUi.serve,
-  swaggerUi.setup(specs, { explorer: true }),
-);
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
 
-app.listen(port, () => {
-  console.log(`La aplicación está escuchando en el puerto ${port}`);
-});
+module.exports = app;
