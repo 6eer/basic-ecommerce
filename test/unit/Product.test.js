@@ -176,6 +176,3 @@ test("delete product, wrong id: should return 404 status", async () => {
   const response = await request(app).del("/products/100");
   expect(response.statusCode).toBe(404);
 });
-
-//Test with mock
-// /products

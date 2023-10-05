@@ -12,7 +12,7 @@ const getCountries = async (req, res) => {
     const countries = await Country.findAll();
     return res.status(200).json(countries);
   } catch (error) {
-    return res.json({ message: error.message });
+    return res.status(500).json({ message: error.message });
   }
 };
 
