@@ -4,10 +4,11 @@ const { newUser1, setupDatabase } = require("../fixtures/database");
 const Product = require("../../src/models/Product");
 
 beforeEach(async () => {
-  //jest.restoreAllMocks(); // Resetting all mocks
   jest.resetAllMocks();
-  await setupDatabase(); // Your database setup
+  await setupDatabase();
 });
+
+const originalFinAll = Product.findAll;
 
 // /products
 
@@ -16,6 +17,20 @@ beforeEach(async () => {
 test("get all products: should return 200 status", async () => {
   const response = await request(app).get("/products");
   expect(response.statusCode).toBe(200);
+});
+
+test("get all products (with mock): should return mock data and 200 status", async () => {
+  Product.findAll = jest
+    .fn()
+    .mockResolvedValue([{ id: 66, name: "Example Product" }]);
+
+  const response = await request(app).get("/products");
+
+  expect(Product.findAll).toHaveBeenCalled();
+  expect(response.statusCode).toBe(200);
+  expect(response.body).toEqual([{ id: 66, name: "Example Product" }]);
+
+  Product.findAll = originalFinAll;
 });
 
 //POST:
@@ -162,18 +177,5 @@ test("delete product, wrong id: should return 404 status", async () => {
   expect(response.statusCode).toBe(404);
 });
 
-test("get all products (with mock): should return mock data and 200 status", async () => {
-  // Mocking the `findAll` method to return a specific value
-  Product.findAll = jest
-    .fn()
-    .mockResolvedValue([{ id: 66, name: "Example Product" }]);
-
-  const response = await request(app).get("/products");
-
-  // Ensuring `findAll` was called
-  expect(Product.findAll).toHaveBeenCalled();
-
-  // Testing the response
-  expect(response.statusCode).toBe(200);
-  expect(response.body).toEqual([{ id: 66, name: "Example Product" }]);
-});
+//Test with mock
+// /products
