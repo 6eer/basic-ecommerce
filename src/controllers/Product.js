@@ -72,7 +72,7 @@ const updateProduct = async (req, res) => {
 
     const seller = await Seller.findByPk(sellerId);
     if (!seller) {
-      throw new HttpError("Seller not found", 400);
+      throw new HttpError("Seller not found", 404);
     }
 
     product.name = name !== undefined ? name : product.name;
