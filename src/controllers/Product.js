@@ -13,7 +13,7 @@ const getProducts = async (req, res) => {
     const products = await Product.findAll();
     return res.status(200).json(products);
   } catch (error) {
-    return res.json({ message: error.message });
+    return res.status(500).json({ message: error.message });
   }
 };
 
@@ -72,7 +72,7 @@ const updateProduct = async (req, res) => {
 
     const seller = await Seller.findByPk(sellerId);
     if (!seller) {
-      throw new HttpError("Seller not found", 400);
+      throw new HttpError("Seller not found", 404);
     }
 
     product.name = name !== undefined ? name : product.name;
