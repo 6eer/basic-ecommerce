@@ -398,6 +398,8 @@ test("update product by Id (with mock), server error: should return 500 status a
   expect(response.body).toEqual({ message: "Internal Server Error" });
 });
 
+//=================== DEL
+
 test("delete product (with mock): should return a 200 status", async () => {
   const mockProduct = {
     id: 10,
