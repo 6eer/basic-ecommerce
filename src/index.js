@@ -16,13 +16,13 @@ async function main() {
       console.log(`Server is listening on port ${port}`);
     });
 
-    //{ alter: true }
     await sequelize.authenticate();
     console.log(
       "Connection to the database has been established successfully.",
     );
 
-    await sequelize.sync({ force: false });
+    //await sequelize.sync({ force: true });
+    await sequelize.sync({ alter: true });
     console.log("All models were synchronized successfully.");
   } catch (error) {
     console.error("Unable to connect to the database:", error);
