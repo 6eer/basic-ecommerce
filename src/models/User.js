@@ -35,13 +35,13 @@ const User = sequelize.define("users", {
     type: DataTypes.STRING,
     defaultValue: "user",
     validate: {
-      isIn: [["user", "admin"]],
+      isIn: [["user", "admin", "seller"]],
     },
   },
-  token: {
-    type: DataTypes.STRING,
-    allowNull: true,
-  },
+  //token: {
+  //  type: DataTypes.STRING,
+  //  allowNull: true,
+  //},
 });
 
 User.hasOne(Seller, {

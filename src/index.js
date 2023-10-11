@@ -2,7 +2,6 @@ const app = require("./app");
 const sequelize = require("./database/database");
 require("./models/Country");
 require("./models/User");
-require("./models/Rol");
 require("./models/Seller");
 require("./models/Cart");
 require("./models/Product");
