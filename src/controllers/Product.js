@@ -23,7 +23,6 @@ const createProduct = async (req, res) => {
 
     const seller = await Seller.findByPk(sellerId);
 
-    //This is further validation, once the middleware checks the correct format of the body request, I ensures that the Seller exists on the database.
     if (!seller) {
       throw new HttpError("Not a valid Seller", 404);
     }

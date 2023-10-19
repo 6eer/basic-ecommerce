@@ -1,12 +1,20 @@
 const Cart = require("../models/Cart");
-const Product = require("../models/Product");
+//const Product = require("../models/Product");
+
+class HttpError extends Error {
+  constructor(message, statusCode) {
+    super(message);
+    this.statusCode = statusCode;
+  }
+}
 
 const getCarts = async (req, res) => {
   try {
     const carts = await Cart.findAll();
-    res.json(carts);
+    return res.status(200).json(carts);
   } catch (error) {
-    return res.status(500).json({ message: error.message });
+    const statusCode = error.statusCode || 500;
+    return res.status(statusCode).json({ message: error.message });
   }
 };
 
@@ -20,16 +28,17 @@ const getCart = async (req, res) => {
     });
 
     if (!cart) {
-      throw new Error("Cart not found");
+      throw new HttpError("Cart not found", 404);
     }
 
-    res.json(cart);
+    return res.status(200).json(cart);
   } catch (error) {
-    return res.status(500).json({ message: error.message });
+    const statusCode = error.statusCode || 500;
+    return res.status(statusCode).json({ message: error.message });
   }
 };
 
-const addProductToCart = async (req, res) => {
+/* const addProductToCart = async (req, res) => {
   try {
     const { cartId, productId } = req.body;
 
@@ -71,12 +80,12 @@ const getProducts1 = async (req, res) => {
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
-};
+}; */
 
 //res.status(200).send("Product added to cart successfully");
 module.exports = {
   getCarts,
   getCart,
-  addProductToCart,
-  getProducts1,
+  /*   addProductToCart,
+  getProducts1, */
 };

@@ -3,16 +3,52 @@ const {
   getUsers,
   signUpUser,
   getUser,
-  updateUser,
   deleteUser,
+  logInUser,
+  logOutUser,
+  getProfile,
+  deleteProfile,
+  updateProfile,
 } = require("../controllers/User");
+
+const {
+  validate,
+  auth,
+  roleCheck,
+  validateParams,
+} = require("../middleware/validate");
+const {
+  userSchema,
+  userSchemaUpdate,
+  userSchemaLogIn,
+  userParamsSchema,
+} = require("../schema/User");
 
 const router = new express.Router();
 
-router.get("/users", getUsers);
-router.post("/users", signUpUser);
-router.get("/users/:id", getUser);
-router.put("/users/:id", updateUser);
-router.delete("/users/:id", deleteUser);
+router.get("/users/me", auth, getProfile); //USERS - SELLERS - ADMIN
+router.get("/users", auth, roleCheck("admin"), getUsers); //ADMIN
+
+router.post("/users", validate(userSchema), signUpUser); //USERS - SELLERS - ADMIN
+router.post("/users/login", validate(userSchemaLogIn), logInUser); //USERS - SELLERS - ADMIN
+router.post("/users/logout", auth, logOutUser); //USERS - SELLERS - ADMIN
+
+//
+router.delete("/users/me", auth, deleteProfile); //USERS - SELLERS - ADMIN
+router.get(
+  "/users/:id",
+  validateParams(userParamsSchema),
+  auth,
+  roleCheck("admin"),
+  getUser,
+); //ADMIN
+router.put("/users/me", auth, validate(userSchemaUpdate), updateProfile); //USERS - SELLERS - ADMIN
+router.delete(
+  "/users/:id",
+  validateParams(userParamsSchema),
+  auth,
+  roleCheck("admin"),
+  deleteUser,
+); //ADMIN
 
 module.exports = router;
