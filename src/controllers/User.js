@@ -2,38 +2,109 @@ const User = require("../models/User");
 const Cart = require("../models/Cart");
 const Seller = require("../models/Seller");
 const sequelize = require("../database/database");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const Product = require("../models/Product");
 
-const getUsers = async (req, res) => {
-  try {
-    const users = await User.findAll();
-    res.json(users);
-  } catch (error) {
-    return res.status(500).json({ message: error.message });
+class HttpError extends Error {
+  constructor(message, statusCode) {
+    super(message);
+    this.statusCode = statusCode;
   }
-};
+}
 
 const signUpUser = async (req, res) => {
   const transaction = await sequelize.transaction();
   try {
-    const { name, email, password } = req.body;
+    const { name, email, password, role } = req.body;
+
+    const userN = await User.findOne({ where: { name: name } });
+    if (userN) {
+      throw new HttpError("Name is not available", 400);
+    }
+
+    const user = await User.findOne({ where: { email: email } });
+    if (user) {
+      throw new HttpError("Email is not available", 400);
+    }
+
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
 
     const newUser = await User.create(
       {
         name: name,
         email: email,
-        password: password,
+        password: hashedPassword,
+        role: role,
       },
       { transaction },
     );
 
     await Cart.create({ userId: newUser.id }, { transaction });
 
+    const payload = {
+      userId: newUser.id,
+    };
+
+    const options = {
+      expiresIn: "1h",
+    };
+
+    const token = jwt.sign(payload, process.env.JWT_SECRET, options);
+
     await transaction.commit();
 
-    res.json(newUser);
+    res
+      .status(201)
+      .send({ token, newUser, message: "The sign up was succesfull" });
   } catch (error) {
     await transaction.rollback();
-    return res.status(500).json({ message: error.message });
+    const statusCode = error.statusCode || 500;
+    return res.status(statusCode).json({ message: error.message });
+  }
+};
+
+const logInUser = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    const user = await User.findOne({ where: { email: email } });
+    if (!user) {
+      throw new HttpError("Unable to login", 400);
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password);
+
+    if (!isMatch) {
+      throw new HttpError("Unable to login", 400);
+    }
+
+    const payload = {
+      userId: user.id,
+    };
+
+    const options = {
+      expiresIn: "1h",
+    };
+
+    const token = jwt.sign(payload, process.env.JWT_SECRET, options);
+
+    return res
+      .status(200)
+      .json({ user, token, message: "The login was succesfull" });
+  } catch (error) {
+    const statusCode = error.statusCode || 500;
+    return res.status(statusCode).json({ message: error.message });
+  }
+};
+
+const logOutUser = async (req, res) => {
+  try {
+    return res.status(200).json({ message: "The logout was succesfull" });
+  } catch (error) {
+    const statusCode = error.statusCode || 500;
+    return res.status(statusCode).json({ message: error.message });
   }
 };
 
@@ -43,34 +114,66 @@ const getUser = async (req, res) => {
     const user = await User.findByPk(id);
 
     if (!user) {
-      throw new Error("User not found");
+      throw new HttpError("User not found", 404);
     }
 
-    res.json(user);
+    res.status(200).json(user);
   } catch (error) {
-    return res.status(500).json({ message: error.message });
+    const statusCode = error.statusCode || 500;
+    return res.status(statusCode).json({ message: error.message });
   }
 };
 
-const updateUser = async (req, res) => {
+const getUsers = async (req, res) => {
   try {
-    const id = req.params.id;
-    const user = await User.findByPk(id);
+    const users = await User.findAll();
+    return res.status(200).json(users);
+  } catch (error) {
+    const statusCode = error.statusCode || 500;
+    return res.status(statusCode).json({ message: error.message });
+  }
+};
 
-    if (!user) {
-      throw new Error("User not found");
+const getProfile = async (req, res) => {
+  try {
+    res.status(200).json(req.user);
+  } catch (error) {
+    const statusCode = error.statusCode || 500;
+    return res.status(statusCode).json({ message: error.message });
+  }
+};
+
+const updateProfile = async (req, res) => {
+  try {
+    const { name, email, password } = req.body;
+
+    if (name) {
+      const userN = await User.findOne({ where: { name: name } });
+      if (userN) {
+        throw new HttpError("Name is not available", 400);
+      }
     }
 
-    const { name, email, password } = req.body;
-    user.name = name;
-    user.email = email;
-    user.password = password;
+    if (email) {
+      const userE = await User.findOne({ where: { email: email } });
+      if (userE) {
+        throw new HttpError("Email is not available", 400);
+      }
+    }
 
-    await user.save();
+    req.user.name = name !== undefined ? name : req.user.name;
+    req.user.email = email !== undefined ? email : req.user.email;
+    req.user.password =
+      password !== undefined
+        ? await bcrypt.hash(password, 10)
+        : req.user.password;
 
-    res.json(user);
+    await req.user.save();
+
+    res.status(200).json(req.user);
   } catch (error) {
-    return res.status(500).json({ message: error.message });
+    const statusCode = error.statusCode || 500;
+    return res.status(statusCode).json({ message: error.message });
   }
 };
 
@@ -81,7 +184,7 @@ const deleteUser = async (req, res) => {
     const user = await User.findByPk(id);
 
     if (!user) {
-      throw new Error("User not found");
+      throw new HttpError("User not found", 404);
     }
 
     const cart = await Cart.findOne({
@@ -103,12 +206,56 @@ const deleteUser = async (req, res) => {
     }
 
     if (seller) {
+      await Product.destroy({
+        where: {
+          sellerId: seller.id,
+        },
+      });
       await seller.destroy();
     }
 
     res.status(200).json({ message: "The user was successfully removed" });
   } catch (error) {
-    return res.status(500).json({ message: error.message });
+    const statusCode = error.statusCode || 500;
+    return res.status(statusCode).json({ message: error.message });
+  }
+};
+
+const deleteProfile = async (req, res) => {
+  try {
+    const id = req.user.id;
+
+    const cart = await Cart.findOne({
+      where: {
+        userId: id,
+      },
+    });
+
+    const seller = await Seller.findOne({
+      where: {
+        userId: id,
+      },
+    });
+
+    await req.user.destroy();
+
+    if (cart) {
+      await cart.destroy();
+    }
+
+    if (seller) {
+      await Product.destroy({
+        where: {
+          sellerId: seller.id,
+        },
+      });
+      await seller.destroy();
+    }
+
+    res.status(200).json({ message: "The user was successfully removed" });
+  } catch (error) {
+    const statusCode = error.statusCode || 500;
+    return res.status(statusCode).json({ message: error.message });
   }
 };
 
@@ -116,6 +263,10 @@ module.exports = {
   getUsers,
   signUpUser,
   getUser,
-  updateUser,
   deleteUser,
+  logInUser,
+  logOutUser,
+  getProfile,
+  deleteProfile,
+  updateProfile,
 };

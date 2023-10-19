@@ -2,12 +2,20 @@ const Seller = require("../models/Seller");
 const User = require("../models/User");
 const Product = require("../models/Product");
 
+class HttpError extends Error {
+  constructor(message, statusCode) {
+    super(message);
+    this.statusCode = statusCode;
+  }
+}
+
 const getSeller = async (req, res) => {
   try {
     const sellers = await Seller.findAll();
-    res.json(sellers);
+    return res.status(200).json(sellers);
   } catch (error) {
-    return res.status(500).json({ message: error.message });
+    const statusCode = error.statusCode || 500;
+    return res.status(statusCode).json({ message: error.message });
   }
 };
 
@@ -18,7 +26,7 @@ const createSeller = async (req, res) => {
     const user = await User.findByPk(userId);
 
     if (!user) {
-      throw new Error("userId does not exist");
+      throw new HttpError("User not found", 404);
     }
 
     const newSeller = await Seller.create({
@@ -26,9 +34,10 @@ const createSeller = async (req, res) => {
       sales: sales,
     });
 
-    res.json(newSeller);
+    return res.status(201).json(newSeller);
   } catch (error) {
-    return res.status(500).json({ message: error.message });
+    const statusCode = error.statusCode || 500;
+    return res.status(statusCode).json({ message: error.message });
   }
 };
 
@@ -39,7 +48,7 @@ const deleteSeller = async (req, res) => {
     const seller = await Seller.findByPk(id);
 
     if (!seller) {
-      throw new Error("Seller not found");
+      throw new HttpError("Seller not found", 404);
     }
 
     await Product.destroy({
@@ -56,7 +65,8 @@ const deleteSeller = async (req, res) => {
 
     res.status(200).json({ message: "The seller was successfully removed" });
   } catch (error) {
-    return res.status(500).json({ message: error.message });
+    const statusCode = error.statusCode || 500;
+    return res.status(statusCode).json({ message: error.message });
   }
 };
 
