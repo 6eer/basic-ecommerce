@@ -1,4 +1,5 @@
 const Ajv = require("ajv");
+const addFormats = require("ajv-formats");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 
@@ -11,6 +12,7 @@ class HttpError extends Error {
 
 const validate = (schema) => {
   const ajv = new Ajv();
+  addFormats(ajv);
   return (req, res, next) => {
     const validateData = ajv.compile(schema);
     const valid = validateData(req.body);
@@ -23,6 +25,7 @@ const validate = (schema) => {
 
 const validateParams = (paramsSchema) => {
   const ajv = new Ajv();
+  addFormats(ajv);
   return (req, res, next) => {
     req.params.id = Number(req.params.id);
     const valid = ajv.validate(paramsSchema, req.params);
@@ -33,7 +36,6 @@ const validateParams = (paramsSchema) => {
   };
 };
 
-//Como el token no se almacena en la BD, el findOne solamente se hace con el ID decodificado del token que manda el cliente. Si existe un user con ese ID, esta autentificado correctamente.
 const auth = async (req, res, next) => {
   try {
     const tokenHeader = req.header("Authorization");
@@ -43,7 +45,6 @@ const auth = async (req, res, next) => {
     }
 
     const token = req.header("Authorization").replace("Bearer ", "");
-    console.log(token);
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
@@ -55,13 +56,14 @@ const auth = async (req, res, next) => {
       throw new HttpError("Auth Failed, no user found", 401);
     }
 
-    //Agregamos el objeto (user) a la request
-
     req.user = user;
     next();
   } catch (error) {
     if (error instanceof jwt.TokenExpiredError) {
       return res.status(401).json({ message: "Auth Failed, Token expired" });
+    }
+    if (error instanceof jwt.JsonWebTokenError) {
+      return res.status(401).json({ message: "Auth Failed, Token invalid" });
     }
     const statusCode = error.statusCode || 500;
     return res.status(statusCode).json({ message: error.message });

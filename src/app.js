@@ -23,19 +23,9 @@ const options = {
   definition: {
     openapi: "3.1.0",
     info: {
-      title: "LogRocket Express API with Swagger",
-      version: "0.1.0",
-      description:
-        "This is a simple CRUD API application made with Express and documented with Swagger",
-      license: {
-        name: "MIT",
-        url: "https://spdx.org/licenses/MIT.html",
-      },
-      contact: {
-        name: "LogRocket",
-        url: "https://logrocket.com",
-        email: "info@email.com",
-      },
+      title: "Basic-Ecommerce",
+      version: "1.0.0",
+      description: "My first app",
     },
     servers: [
       {
@@ -43,7 +33,8 @@ const options = {
       },
     ],
   },
-  apis: [path.resolve(__dirname, "routes/*.js")],
+
+  apis: [path.resolve(__dirname, "swaggerDocumentation/*.js")],
 };
 
 const specs = swaggerJsdoc(options);

@@ -11,11 +11,17 @@ const {
   updateProfile,
 } = require("../controllers/User");
 
-const { validate, auth, roleCheck } = require("../middleware/validate");
+const {
+  validate,
+  auth,
+  roleCheck,
+  validateParams,
+} = require("../middleware/validate");
 const {
   userSchema,
   userSchemaUpdate,
   userSchemaLogIn,
+  userParamsSchema,
 } = require("../schema/User");
 
 const router = new express.Router();
@@ -29,8 +35,20 @@ router.post("/users/logout", auth, logOutUser); //USERS - SELLERS - ADMIN
 
 //
 router.delete("/users/me", auth, deleteProfile); //USERS - SELLERS - ADMIN
-router.get("/users/:id", auth, roleCheck("admin"), getUser); //ADMIN
+router.get(
+  "/users/:id",
+  validateParams(userParamsSchema),
+  auth,
+  roleCheck("admin"),
+  getUser,
+); //ADMIN
 router.put("/users/me", auth, validate(userSchemaUpdate), updateProfile); //USERS - SELLERS - ADMIN
-router.delete("/users/:id", auth, roleCheck("admin"), deleteUser); //ADMIN
+router.delete(
+  "/users/:id",
+  validateParams(userParamsSchema),
+  auth,
+  roleCheck("admin"),
+  deleteUser,
+); //ADMIN
 
 module.exports = router;

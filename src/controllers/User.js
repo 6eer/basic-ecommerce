@@ -4,6 +4,7 @@ const Seller = require("../models/Seller");
 const sequelize = require("../database/database");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const Product = require("../models/Product");
 
 class HttpError extends Error {
   constructor(message, statusCode) {
@@ -16,6 +17,16 @@ const signUpUser = async (req, res) => {
   const transaction = await sequelize.transaction();
   try {
     const { name, email, password, role } = req.body;
+
+    const userN = await User.findOne({ where: { name: name } });
+    if (userN) {
+      throw new HttpError("Name is not available", 400);
+    }
+
+    const user = await User.findOne({ where: { email: email } });
+    if (user) {
+      throw new HttpError("Email is not available", 400);
+    }
 
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(password, saltRounds);
@@ -41,9 +52,6 @@ const signUpUser = async (req, res) => {
     };
 
     const token = jwt.sign(payload, process.env.JWT_SECRET, options);
-
-    //newUser.token = token;
-    //await newUser.save({ transaction });
 
     await transaction.commit();
 
@@ -81,9 +89,6 @@ const logInUser = async (req, res) => {
     };
 
     const token = jwt.sign(payload, process.env.JWT_SECRET, options);
-    console.log(token);
-    //user.token = token;
-    //await user.save();
 
     return res
       .status(200)
@@ -96,9 +101,6 @@ const logInUser = async (req, res) => {
 
 const logOutUser = async (req, res) => {
   try {
-    // req.user.token = null;
-    // await req.user.save();
-
     return res.status(200).json({ message: "The logout was succesfull" });
   } catch (error) {
     const statusCode = error.statusCode || 500;
@@ -112,7 +114,7 @@ const getUser = async (req, res) => {
     const user = await User.findByPk(id);
 
     if (!user) {
-      throw new Error("User not found");
+      throw new HttpError("User not found", 404);
     }
 
     res.status(200).json(user);
@@ -144,6 +146,21 @@ const getProfile = async (req, res) => {
 const updateProfile = async (req, res) => {
   try {
     const { name, email, password } = req.body;
+
+    if (name) {
+      const userN = await User.findOne({ where: { name: name } });
+      if (userN) {
+        throw new HttpError("Name is not available", 400);
+      }
+    }
+
+    if (email) {
+      const userE = await User.findOne({ where: { email: email } });
+      if (userE) {
+        throw new HttpError("Email is not available", 400);
+      }
+    }
+
     req.user.name = name !== undefined ? name : req.user.name;
     req.user.email = email !== undefined ? email : req.user.email;
     req.user.password =
@@ -167,7 +184,7 @@ const deleteUser = async (req, res) => {
     const user = await User.findByPk(id);
 
     if (!user) {
-      throw new Error("User not found");
+      throw new HttpError("User not found", 404);
     }
 
     const cart = await Cart.findOne({
@@ -189,6 +206,11 @@ const deleteUser = async (req, res) => {
     }
 
     if (seller) {
+      await Product.destroy({
+        where: {
+          sellerId: seller.id,
+        },
+      });
       await seller.destroy();
     }
 
@@ -208,6 +230,7 @@ const deleteProfile = async (req, res) => {
         userId: id,
       },
     });
+
     const seller = await Seller.findOne({
       where: {
         userId: id,
@@ -221,6 +244,11 @@ const deleteProfile = async (req, res) => {
     }
 
     if (seller) {
+      await Product.destroy({
+        where: {
+          sellerId: seller.id,
+        },
+      });
       await seller.destroy();
     }
 

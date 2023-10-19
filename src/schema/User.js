@@ -7,7 +7,7 @@ const userSchema = {
     },
     email: {
       type: "string",
-      //format: "email",
+      format: "email",
     },
     password: {
       type: "string",
@@ -16,9 +16,21 @@ const userSchema = {
     },
     role: {
       type: "string",
+      enum: ["admin", "user", "seller"],
     },
   },
   required: ["email", "password", "name", "role"],
+  additionalProperties: false,
+};
+
+const userParamsSchema = {
+  type: "object",
+  properties: {
+    id: {
+      type: "integer",
+    },
+  },
+  required: ["id"],
   additionalProperties: false,
 };
 
@@ -27,12 +39,10 @@ const userSchemaLogIn = {
   properties: {
     email: {
       type: "string",
-      //format: "email",
+      format: "email",
     },
     password: {
       type: "string",
-      minLength: 7,
-      maxLength: 100,
     },
   },
   required: ["email", "password"],
@@ -48,6 +58,7 @@ const userSchemaUpdate = {
     },
     email: {
       type: "string",
+      format: "email",
     },
     password: {
       type: "string",
@@ -58,4 +69,9 @@ const userSchemaUpdate = {
   additionalProperties: false,
 };
 
-module.exports = { userSchema, userSchemaUpdate, userSchemaLogIn };
+module.exports = {
+  userSchema,
+  userSchemaUpdate,
+  userSchemaLogIn,
+  userParamsSchema,
+};

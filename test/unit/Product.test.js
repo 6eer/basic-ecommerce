@@ -231,7 +231,7 @@ test("get product by Id (with mock), server error: should return 500 status and 
 
 //=================== PUT
 
-test("update product by Id (with mock): should return mock data and a 201 status", async () => {
+test("update product by Id (with mock): should return mock data and a 200 status", async () => {
   const mockProduct = {
     id: 10,
     name: "TestProduct",
