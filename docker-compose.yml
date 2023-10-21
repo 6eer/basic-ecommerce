@@ -3,7 +3,7 @@ services:
     env_file:
       - config/development/dev.env
     build: .
-    #image: my-node-app
+    image: my-ecommerce-app
     ports:
       - "3000:3000"
     #working_dir: /app

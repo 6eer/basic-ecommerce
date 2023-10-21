@@ -3,22 +3,30 @@ const app = require("../../src/app");
 const Product = require("../../src/models/Product");
 const Seller = require("../../src/models/Seller");
 const User = require("../../src/models/User");
-const jwt = require("jsonwebtoken");
-const bcrypt = require("bcrypt");
 const Cart = require("../../src/models/Cart");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const sequelize = require("../../src/database/database");
 
-beforeEach(async () => {
-  jest.resetAllMocks();
-});
+jest.mock("bcrypt");
+jest.mock("jsonwebtoken");
+
+//beforeEach(async () => {
+//  jest.resetAllMocks();
+//});
 
 afterEach(async () => {
   jest.restoreAllMocks();
 });
 
-jest.mock("bcrypt");
-jest.mock("jsonwebtoken");
-
 ///////////////////////// POST: Sign Up User
+
+const mockTransaction = {
+  commit: jest.fn().mockResolvedValue(null),
+  rollback: jest.fn().mockResolvedValue(null),
+};
+
+sequelize.transaction = jest.fn().mockResolvedValue(mockTransaction);
 
 test("new user (with mock): should return 201 status", async () => {
   User.findOne = jest.fn().mockResolvedValue(null);
@@ -207,6 +215,7 @@ test("log in user (with mock), bad request: should return 400 status and error m
 });
 
 test("log in user (with mock), bad request: should return 400 status and error message", async () => {
+  jest.resetAllMocks();
   User.findOne
     .mockImplementationOnce(() => true)
     .mockImplementationOnce(() => null);
