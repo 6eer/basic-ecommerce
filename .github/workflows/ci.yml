@@ -1,0 +1,30 @@
+name: Node.js CI
+
+on:
+  push:
+  pull_request:
+    branches:
+      - "develop"
+
+jobs:
+  Test:
+    runs-on: windows-latest
+
+    strategy:
+      matrix:
+        node-version: [20.5.1]
+
+    steps:
+      - name: Checks out the repository code into the runner
+        uses: actions/checkout@v4
+
+      - name: Setup node environment
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20.5.1
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm test
