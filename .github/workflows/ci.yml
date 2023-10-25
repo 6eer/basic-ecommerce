@@ -15,9 +15,9 @@ jobs:
   lint:
     runs-on: windows-latest
 
-    strategy:
-      matrix:
-        node-version: [20.5.1]
+    #strategy:
+    #  matrix:
+    #    node-version: [20.5.1]
 
     steps:
       - name: Checks out the repository code into the runner
@@ -38,9 +38,9 @@ jobs:
     needs: [lint]
     runs-on: windows-latest
 
-    strategy:
-      matrix:
-        node-version: [20.5.1]
+    #strategy:
+    #  matrix:
+    #    node-version: [20.5.1]
 
     steps:
       - name: Checks out the repository code into the runner
@@ -68,9 +68,9 @@ jobs:
     needs: [test, lint]
     runs-on: windows-latest
 
-    strategy:
-      matrix:
-        node-version: [20.5.1]
+    #strategy:
+    #  matrix:
+    #    node-version: [20.5.1]
 
     steps:
       - name: Checks out the repository code into the runner
