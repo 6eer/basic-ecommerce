@@ -54,6 +54,16 @@ jobs:
         node-version: [20.5.1]
 
     steps:
+      - name: Checks out the repository code into the runner
+        uses: actions/checkout@v4
+
+      - name: Setup node environment
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20.5.1
+
+      - name: Install dependencies
+        run: npm ci
       - name: Deploy
         uses: johnbeynon/render-deploy-action@v0.0.8
         with:
