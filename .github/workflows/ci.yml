@@ -12,7 +12,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  Test:
+  lint:
     runs-on: windows-latest
 
     strategy:
@@ -34,19 +34,8 @@ jobs:
       - name: Lint
         run: npm run lint
 
-      - name: Run tests
-        run: npm run test:ci
-        env:
-          NODE_ENV: ${{ secrets.NODE_ENV }}
-          DB_NAME: ${{ secrets.DB_NAME }}
-          DB_HOST: ${{ secrets.DB_HOST }}
-          DB_USERNAME: ${{ secrets.DB_USERNAME }}
-          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          DB_DIALECT: ${{ secrets.DB_DIALECT }}
-
-  deploy:
-    name: Deploy
-    needs: [Test]
+  test:
+    needs: [lint]
     runs-on: windows-latest
 
     strategy:
@@ -64,7 +53,31 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
-      - name: Deploy
+
+      - name: Run tests
+        run: npm run test:ci
+        env:
+          NODE_ENV: ${{ secrets.NODE_ENV }}
+          DB_NAME: ${{ secrets.DB_NAME }}
+          DB_HOST: ${{ secrets.DB_HOST }}
+          DB_USERNAME: ${{ secrets.DB_USERNAME }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_DIALECT: ${{ secrets.DB_DIALECT }}
+
+  deploy:
+    needs: [test, lint]
+    runs-on: windows-latest
+
+    strategy:
+      matrix:
+        node-version: [20.5.1]
+
+    steps:
+      - name: Checks out the repository code into the runner
+        uses: actions/checkout@v4
+
+      - name: Deploy to Render
+        if: ${{github.event_name == 'push'}}
         uses: johnbeynon/render-deploy-action@v0.0.8
         with:
           service-id: ${{ secrets.SERVICE_ID }}
