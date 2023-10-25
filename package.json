@@ -11,7 +11,10 @@
     "lint": "eslint .",
     "prepare": "husky install",
     "dev": "nodemon src/index.js",
-    "test": "env-cmd -f ./config/development/test.env jest --runInBand"
+    "test": "env-cmd -f ./config/development/test.env jest --runInBand",
+    "test:ci": "jest --runInBand",
+    "start": "node src/index.js",
+    "startLocal": "env-cmd -f ./config/development/dev.env node src/index.js"
   },
   "author": "",
   "license": "ISC",
