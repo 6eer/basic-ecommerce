@@ -6,22 +6,8 @@ services:
     image: my-ecommerce-app
     ports:
       - "3000:3000"
-    #working_dir: /app
-    # environment:
-    #   DB_HOST: db
-    #   DB_ENGINE: ${DB_ENGINE}
-    #   DB_USERNAME: ${DB_USERNAME}
-    #   DB_PASSWORD: ${DB_PASSWORD}
-    #   DB_NAME: ${DB_NAME}
-    #   DB_DIALECT: ${DB_DIALECT}
-    #   JWT_SECRET: ${JWT_SECRET}
-    #DATABASE_URL: "postgres://username:password@db:5432/databasename"
-    # PORT: 3000
     depends_on:
       - db
-    #volumes:
-    #  - ./src:/usr/src/app/src
-    #  - /usr/src/app/node_modules
     command: ["/usr/wait-for-it.sh", "db:5432", "--", "npm", "run", "dev"]
 
   db:
@@ -30,10 +16,6 @@ services:
     image: postgres:16.0-alpine3.17
     volumes:
       - ./ecommerce-postgres-data:/var/lib/postgresql/data
-    # environment:
-    #   POSTGRES_USER: ${DB_USERNAME}
-    #   POSTGRES_PASSWORD: ${DB_PASSWORD}
-    #   POSTGRES_DB: ${DB_NAME}
     ports:
       - "5432:5432"
 
@@ -41,9 +23,6 @@ services:
     env_file:
       - config/development/dev.env
     image: dpage/pgadmin4
-    # environment:
-    #   PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL}
-    #   PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD}
     ports:
       - "5050:80"
     depends_on:
