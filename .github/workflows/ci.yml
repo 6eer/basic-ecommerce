@@ -37,6 +37,7 @@ jobs:
       - name: Run tests
         run: npm run test:ci
         env:
+          NODE_ENV: ${{ secrets.NODE_ENV }}
           DB_NAME: ${{ secrets.DB_NAME }}
           DB_HOST: ${{ secrets.DB_HOST }}
           DB_USERNAME: ${{ secrets.DB_USERNAME }}
