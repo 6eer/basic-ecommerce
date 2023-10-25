@@ -42,3 +42,19 @@ jobs:
           DB_USERNAME: ${{ secrets.DB_USERNAME }}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
           DB_DIALECT: ${{ secrets.DB_DIALECT }}
+
+  deploy:
+    name: Deploy
+    needs: [Test]
+    runs-on: windows-latest
+
+    strategy:
+      matrix:
+        node-version: [20.5.1]
+
+    steps:
+      - name: Deploy
+        uses: johnbeynon/render-deploy-action@v0.0.8
+        with:
+          service-id: ${{ secrets.SERVICE_ID }}
+          api-key: ${{ secrets.API_KEY }}
