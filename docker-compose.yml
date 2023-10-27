@@ -4,11 +4,41 @@ services:
       - config/development/dev.env
     build: .
     image: my-ecommerce-app
+    volumes:
+      - ./:/usr/src/app # Needed to work nodemon
+      - /usr/src/app/node_modules # Remove this if you have pure JS dependencies
+      #- app-code:/usr/src/app
+      #- node-modules:/usr/src/app/node_modules
     ports:
       - "3000:3000"
+      - "9229:9229"
     depends_on:
       - db
-    command: ["/usr/wait-for-it.sh", "db:5432", "--", "npm", "run", "dev"]
+
+    #This command is when i dont want to use the debugger.
+    command:
+      [
+        "/usr/wait-for-it.sh",
+        "db:5432",
+        "--timeout=60",
+        "--",
+        "npm",
+        "run",
+        "dev",
+      ]
+
+    #This command is when i want to use the debugger.
+    # command:
+    #   [
+    #     "/usr/wait-for-it.sh",
+    #     "db:5432",
+    #     "--timeout=60",
+    #     "--",
+    #     "./node_modules/.bin/nodemon",
+    #     "-L",
+    #     "--inspect-brk=0.0.0.0:9229",
+    #     "src/index.js",
+    #   ]
 
   db:
     env_file:
@@ -18,6 +48,11 @@ services:
       - ./ecommerce-postgres-data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
   pgadmin:
     env_file:
