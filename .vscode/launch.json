@@ -25,6 +25,17 @@
       "windows": {
         "program": "${workspaceFolder}/node_modules/jest/bin/jest.js"
       }
+    },
+
+    {
+      "type": "node",
+      "request": "attach",
+      "name": "Docker: Attach to Node",
+      "port": 9229,
+      "address": "localhost",
+      "localRoot": "${workspaceFolder}",
+      "remoteRoot": "/usr/src/app",
+      "skipFiles": ["<node_internals>/**"]
     }
   ]
 }

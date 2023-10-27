@@ -10,7 +10,7 @@
     "format": "prettier --write .",
     "lint": "eslint .",
     "prepare": "husky install",
-    "dev": "nodemon src/index.js",
+    "dev": "nodemon -L src/index.js",
     "test": "env-cmd -f ./config/development/test.env jest --runInBand",
     "test:ci": "jest --runInBand",
     "start": "node src/index.js",
