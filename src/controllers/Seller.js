@@ -19,9 +19,21 @@ const getSeller = async (req, res) => {
   }
 };
 
+const getSellerByCountry = async (req, res) => {
+  try {
+    const country = req.query.country;
+    const sellers = await Seller.findAll({ where: { country: country } });
+
+    return res.status(200).json(sellers);
+  } catch (error) {
+    const statusCode = error.statusCode || 500;
+    return res.status(statusCode).json({ message: error.message });
+  }
+};
+
 const createSeller = async (req, res) => {
   try {
-    const { sales, userId } = req.body;
+    const { name, sales, country, userId } = req.body;
 
     const user = await User.findByPk(userId);
 
@@ -30,6 +42,8 @@ const createSeller = async (req, res) => {
     }
 
     const newSeller = await Seller.create({
+      name: name,
+      country: country,
       userId: userId,
       sales: sales,
     });
@@ -72,6 +86,7 @@ const deleteSeller = async (req, res) => {
 
 module.exports = {
   getSeller,
+  getSellerByCountry,
   createSeller,
   deleteSeller,
 };

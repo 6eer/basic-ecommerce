@@ -17,6 +17,18 @@ const getProducts = async (req, res) => {
   }
 };
 
+const getProductsBySeller = async (req, res) => {
+  try {
+    const sellerId = req.query.sellerId;
+    const products = await Product.findAll({ where: { sellerId: sellerId } });
+
+    return res.status(200).json(products);
+  } catch (error) {
+    const statusCode = error.statusCode || 500;
+    return res.status(statusCode).json({ message: error.message });
+  }
+};
+
 const createProduct = async (req, res) => {
   try {
     const { name, price, stock, description, sellerId } = req.body;
@@ -120,4 +132,5 @@ module.exports = {
   getProduct,
   updateProduct,
   deleteProduct,
+  getProductsBySeller,
 };

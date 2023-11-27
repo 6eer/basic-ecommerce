@@ -7,8 +7,11 @@ const User = require("./routes/User");
 const Product = require("./routes/Product");
 const Seller = require("./routes/Seller");
 const Cart = require("./routes/Cart");
+const CartItem = require("./routes/CartItem");
+const cors = require("cors");
 
 const app = express();
+app.use(cors());
 
 //Middlewares
 app.use(express.json());
@@ -18,6 +21,7 @@ app.use(User);
 app.use(Product);
 app.use(Seller);
 app.use(Cart);
+app.use(CartItem);
 
 const options = {
   definition: {

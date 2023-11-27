@@ -16,7 +16,8 @@ class HttpError extends Error {
 const signUpUser = async (req, res) => {
   const transaction = await sequelize.transaction();
   try {
-    const { name, email, password, role } = req.body;
+    //const { name, email, password, role } = req.body;
+    const { name, email, password } = req.body;
 
     const userN = await User.findOne({ where: { name: name } });
     if (userN) {
@@ -36,7 +37,7 @@ const signUpUser = async (req, res) => {
         name: name,
         email: email,
         password: hashedPassword,
-        role: role,
+        //role: role,
       },
       { transaction },
     );
@@ -52,12 +53,16 @@ const signUpUser = async (req, res) => {
     };
 
     const token = jwt.sign(payload, process.env.JWT_SECRET, options);
+    const expiresIn = 3600;
 
     await transaction.commit();
 
-    res
-      .status(201)
-      .send({ token, newUser, message: "The sign up was succesfull" });
+    res.status(201).send({
+      token,
+      expiresIn: expiresIn,
+      newUser,
+      message: "The sign up was succesfull",
+    });
   } catch (error) {
     await transaction.rollback();
     const statusCode = error.statusCode || 500;
@@ -87,12 +92,16 @@ const logInUser = async (req, res) => {
     const options = {
       expiresIn: "1h",
     };
+    const expiresIn = 3600;
 
     const token = jwt.sign(payload, process.env.JWT_SECRET, options);
 
-    return res
-      .status(200)
-      .json({ user, token, message: "The login was succesfull" });
+    return res.status(200).json({
+      user,
+      token,
+      expiresIn: expiresIn,
+      message: "The login was succesfull",
+    });
   } catch (error) {
     const statusCode = error.statusCode || 500;
     return res.status(statusCode).json({ message: error.message });

@@ -19,7 +19,8 @@ const userSchema = {
       enum: ["admin", "user", "seller"],
     },
   },
-  required: ["email", "password", "name", "role"],
+  // required: ["email", "password", "name", "role"],
+  required: ["email", "password", "name"],
   additionalProperties: false,
 };
 
