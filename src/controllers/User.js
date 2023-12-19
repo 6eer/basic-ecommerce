@@ -95,12 +95,15 @@ const logInUser = async (req, res) => {
     const expiresIn = 3600;
 
     const token = jwt.sign(payload, process.env.JWT_SECRET, options);
+    //const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    //console.log(decoded);
 
     return res.status(200).json({
       user,
       token,
       expiresIn: expiresIn,
       message: "The login was succesfull",
+      //decoded: decoded,
     });
   } catch (error) {
     const statusCode = error.statusCode || 500;

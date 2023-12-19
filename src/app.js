@@ -8,6 +8,7 @@ const Product = require("./routes/Product");
 const Seller = require("./routes/Seller");
 const Cart = require("./routes/Cart");
 const CartItem = require("./routes/CartItem");
+const Purchase = require("./routes/Purchase");
 const cors = require("cors");
 
 const app = express();
@@ -22,6 +23,7 @@ app.use(Product);
 app.use(Seller);
 app.use(Cart);
 app.use(CartItem);
+app.use(Purchase);
 
 const options = {
   definition: {

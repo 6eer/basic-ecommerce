@@ -11,13 +11,21 @@ const cartItemSchema = {
     productPrice: {
       type: "number",
     },
-
+    productStock: {
+      type: "integer",
+    },
     quantity: {
       type: "integer",
       minimum: 1,
     },
   },
-  required: ["productId", "quantity", "productName", "productPrice"],
+  required: [
+    "productId",
+    "quantity",
+    "productName",
+    "productPrice",
+    "productStock",
+  ],
   additionalProperties: false,
 };
 

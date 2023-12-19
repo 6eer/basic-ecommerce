@@ -35,6 +35,15 @@ const getCartItemsByCartId = async (req, res) => {
       where: { cartId: existingCart.id },
     });
 
+    //Esto es para que el available se actualice. Porque sino, si otro usuario compra algo, y tambien esta en el carrito de otro usuario, no alcanza con el cambio de cuenta, porq esto lo q hacia era traerse todos los cartitem q guarde en el momento q se agrego al carrito, tonces no cambiaba el stock cuando alguien compraba, ahora x cada uno antes de llevarlos al carrito cuando cambia el usuairo o se recarga la pagina se chequea de actualizar el stock.
+    for (const cartItem of cartItemsExistingCart) {
+      const product = await Product.findByPk(cartItem.productId);
+      if (product) {
+        cartItem.productStock = product.stock;
+        await cartItem.save();
+      }
+    }
+
     return res.status(200).json(cartItemsExistingCart);
   } catch (error) {
     const statusCode = error.statusCode || 500;
@@ -45,7 +54,8 @@ const getCartItemsByCartId = async (req, res) => {
 const addToCart = async (req, res) => {
   try {
     //Cuando toco el boton ADD en el front, tengo que agregar a la request el productId y la cantidad.
-    const { productId, productName, productPrice, quantity } = req.body;
+    const { productId, productName, productPrice, productStock, quantity } =
+      req.body;
     //Como la request pasa el auth, obtenemos el id del token.
     const id = req.user.id;
 
@@ -76,6 +86,13 @@ const addToCart = async (req, res) => {
     if (existingProduct.price !== productPrice) {
       throw new HttpError(
         "The product price does not match the product price in the database",
+        404,
+      );
+    }
+
+    if (existingProduct.stock !== productStock) {
+      throw new HttpError(
+        "The product stock does not match the product stock in the database",
         404,
       );
     }
@@ -112,6 +129,7 @@ const addToCart = async (req, res) => {
         productId: productId,
         productName: productName,
         productPrice: productPrice,
+        productStock: productStock,
         quantity: quantity,
       });
       return res.status(201).json(newCartitem);

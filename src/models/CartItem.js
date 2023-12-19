@@ -27,6 +27,10 @@ const CartItem = sequelize.define("cartItems", {
     type: DataTypes.FLOAT,
     defaultValue: 0.0,
   },
+  productStock: {
+    type: DataTypes.INTEGER,
+    defaultValue: 0,
+  },
   quantity: {
     type: DataTypes.INTEGER,
     defaultValue: 1,
