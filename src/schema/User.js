@@ -66,6 +66,11 @@ const userSchemaUpdate = {
       minLength: 7,
       maxLength: 100,
     },
+    currentPassword: {
+      type: "string",
+      minLength: 7,
+      maxLength: 100,
+    },
   },
   additionalProperties: false,
 };

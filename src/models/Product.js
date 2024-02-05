@@ -13,7 +13,7 @@ const Product = sequelize.define("products", {
     type: DataTypes.STRING,
     allowNull: false,
     validate: {
-      len: [1, 100],
+      len: [1, 10000],
     },
     defaultValue: "Unknown",
   },

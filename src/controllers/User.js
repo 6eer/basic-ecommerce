@@ -76,13 +76,16 @@ const logInUser = async (req, res) => {
 
     const user = await User.findOne({ where: { email: email } });
     if (!user) {
-      throw new HttpError("Unable to login", 400);
+      throw new HttpError(
+        "We couldn't find an account with that email address",
+        400,
+      );
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
 
     if (!isMatch) {
-      throw new HttpError("Unable to login", 400);
+      throw new HttpError("Password is incorrect", 400);
     }
 
     const payload = {
@@ -157,7 +160,7 @@ const getProfile = async (req, res) => {
 
 const updateProfile = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, email, password, currentPassword } = req.body;
 
     if (name) {
       const userN = await User.findOne({ where: { name: name } });
@@ -170,6 +173,20 @@ const updateProfile = async (req, res) => {
       const userE = await User.findOne({ where: { email: email } });
       if (userE) {
         throw new HttpError("Email is not available", 400);
+      }
+    }
+
+    if (currentPassword) {
+      const isMatch = await bcrypt.compare(currentPassword, req.user.password);
+      if (!isMatch) {
+        throw new HttpError("The current password is incorrect", 400);
+      }
+    }
+
+    if (password) {
+      const isMatch = await bcrypt.compare(password, req.user.password);
+      if (isMatch) {
+        throw new HttpError("Already have that password", 400);
       }
     }
 

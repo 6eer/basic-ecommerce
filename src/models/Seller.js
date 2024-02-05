@@ -12,19 +12,12 @@ const Seller = sequelize.define("sellers", {
     type: DataTypes.STRING,
     allowNull: false,
     validate: {
-      len: [1, 100],
+      len: [1, 10000],
     },
   },
   sales: {
     type: DataTypes.INTEGER,
     defaultValue: 0,
-  },
-  country: {
-    type: DataTypes.STRING,
-    validate: {
-      len: [1, 100],
-    },
-    allowNull: false,
   },
 });
 

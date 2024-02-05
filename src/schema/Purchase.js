@@ -1,24 +1,36 @@
 const PurchaseSchema = {
   type: "object",
   properties: {
-    city: {
+    country: {
       type: "string",
       minLength: 1,
     },
-    postalCode: {
-      type: "number",
-      minLength: 4,
+    name: {
+      type: "string",
+      minLength: 1,
     },
     street: {
       type: "string",
       minLength: 1,
     },
-    streetHeight: {
-      type: "number",
+    building: {
+      type: "string",
+    },
+    city: {
+      type: "string",
       minLength: 1,
     },
+    province: {
+      type: "string",
+    },
+    postalCode: {
+      type: "number",
+    },
+    phoneNumber: {
+      type: "number",
+    },
   },
-  required: ["city", "postalCode", "street", "streetHeight"],
+  required: ["country", "name", "street", "city", "postalCode", "phoneNumber"],
   additionalProperties: false,
 };
 

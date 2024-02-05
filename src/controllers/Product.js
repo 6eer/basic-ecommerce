@@ -29,6 +29,51 @@ const getProductsBySeller = async (req, res) => {
   }
 };
 
+const getProductsBySellerByStock = async (req, res) => {
+  try {
+    const sellerId = req.query.sellerId;
+    const products = await Product.findAll({
+      where: { sellerId: sellerId },
+      order: [["stock", "DESC"]],
+    });
+
+    return res.status(200).json(products);
+  } catch (error) {
+    const statusCode = error.statusCode || 500;
+    return res.status(statusCode).json({ message: error.message });
+  }
+};
+
+const getProductsBySellerByPriceLowToHigh = async (req, res) => {
+  try {
+    const sellerId = req.query.sellerId;
+    const products = await Product.findAll({
+      where: { sellerId: sellerId },
+      order: [["price", "ASC"]],
+    });
+
+    return res.status(200).json(products);
+  } catch (error) {
+    const statusCode = error.statusCode || 500;
+    return res.status(statusCode).json({ message: error.message });
+  }
+};
+
+const getProductsBySellerByPriceHighToLow = async (req, res) => {
+  try {
+    const sellerId = req.query.sellerId;
+    const products = await Product.findAll({
+      where: { sellerId: sellerId },
+      order: [["price", "DESC"]],
+    });
+
+    return res.status(200).json(products);
+  } catch (error) {
+    const statusCode = error.statusCode || 500;
+    return res.status(statusCode).json({ message: error.message });
+  }
+};
+
 const createProduct = async (req, res) => {
   try {
     const { name, price, stock, description, sellerId } = req.body;
@@ -133,4 +178,7 @@ module.exports = {
   updateProduct,
   deleteProduct,
   getProductsBySeller,
+  getProductsBySellerByStock,
+  getProductsBySellerByPriceLowToHigh,
+  getProductsBySellerByPriceHighToLow,
 };

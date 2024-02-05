@@ -94,7 +94,7 @@ const confirmPurchase = async (req, res) => {
       });
     }
 
-    //Actualizo el stock de cada producto dentro del cart.
+    //Si los stock se respetan, Actualizo el stock de cada producto dentro del cart.
     for (const cartItem of existingCartItems) {
       const product = await Product.findByPk(cartItem.productId);
       if (product) {
