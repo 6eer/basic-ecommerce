@@ -1,6 +1,7 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../database/database");
 const Review = require("./Review");
+//const CartItem = require("./CartItem");
 
 const Product = sequelize.define("products", {
   id: {
@@ -12,7 +13,7 @@ const Product = sequelize.define("products", {
     type: DataTypes.STRING,
     allowNull: false,
     validate: {
-      len: [1, 100],
+      len: [1, 10000],
     },
     defaultValue: "Unknown",
   },
@@ -37,5 +38,8 @@ Product.hasMany(Review, {
 Review.belongsTo(Product, {
   allowNull: false,
 });
+
+//Product.hasMany(CartItem, { foreignKey: "productId" });
+//CartItem.belongsTo(Product, { foreignKey: "productId" });
 
 module.exports = Product;

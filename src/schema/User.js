@@ -19,7 +19,8 @@ const userSchema = {
       enum: ["admin", "user", "seller"],
     },
   },
-  required: ["email", "password", "name", "role"],
+  // required: ["email", "password", "name", "role"],
+  required: ["email", "password", "name"],
   additionalProperties: false,
 };
 
@@ -61,6 +62,11 @@ const userSchemaUpdate = {
       format: "email",
     },
     password: {
+      type: "string",
+      minLength: 7,
+      maxLength: 100,
+    },
+    currentPassword: {
       type: "string",
       minLength: 7,
       maxLength: 100,

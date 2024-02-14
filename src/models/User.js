@@ -1,6 +1,6 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../database/database");
-const Seller = require("./Seller");
+//const Seller = require("./Seller");
 const Cart = require("./Cart");
 const Review = require("./Review");
 
@@ -28,7 +28,7 @@ const User = sequelize.define("users", {
     type: DataTypes.STRING,
     allowNull: false,
     validate: {
-      len: [7, 100],
+      len: [7, 10000],
     },
   },
   role: {
@@ -42,15 +42,6 @@ const User = sequelize.define("users", {
   //  type: DataTypes.STRING,
   //  allowNull: true,
   //},
-});
-
-User.hasOne(Seller, {
-  foreignKey: "userId",
-  allowNull: false,
-});
-
-Seller.belongsTo(User, {
-  allowNull: false,
 });
 
 User.hasOne(Cart, {

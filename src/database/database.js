@@ -8,6 +8,7 @@ if (process.env.NODE_ENV === "production") {
     {
       host: process.env.DB_HOST,
       dialect: process.env.DB_DIALECT,
+      logging: false,
     },
   );
   module.exports = sequelize;
@@ -19,6 +20,7 @@ if (process.env.NODE_ENV === "production") {
     {
       host: process.env.DB_HOST2,
       dialect: process.env.DB_DIALECT,
+      logging: false,
     },
   );
   module.exports = sequelize;

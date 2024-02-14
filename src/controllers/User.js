@@ -16,7 +16,8 @@ class HttpError extends Error {
 const signUpUser = async (req, res) => {
   const transaction = await sequelize.transaction();
   try {
-    const { name, email, password, role } = req.body;
+    //const { name, email, password, role } = req.body;
+    const { name, email, password } = req.body;
 
     const userN = await User.findOne({ where: { name: name } });
     if (userN) {
@@ -36,7 +37,7 @@ const signUpUser = async (req, res) => {
         name: name,
         email: email,
         password: hashedPassword,
-        role: role,
+        //role: role,
       },
       { transaction },
     );
@@ -52,12 +53,16 @@ const signUpUser = async (req, res) => {
     };
 
     const token = jwt.sign(payload, process.env.JWT_SECRET, options);
+    const expiresIn = 3600;
 
     await transaction.commit();
 
-    res
-      .status(201)
-      .send({ token, newUser, message: "The sign up was succesfull" });
+    res.status(201).send({
+      token,
+      expiresIn: expiresIn,
+      newUser,
+      message: "The sign up was succesfull",
+    });
   } catch (error) {
     await transaction.rollback();
     const statusCode = error.statusCode || 500;
@@ -71,13 +76,16 @@ const logInUser = async (req, res) => {
 
     const user = await User.findOne({ where: { email: email } });
     if (!user) {
-      throw new HttpError("Unable to login", 400);
+      throw new HttpError(
+        "We couldn't find an account with that email address",
+        400,
+      );
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
 
     if (!isMatch) {
-      throw new HttpError("Unable to login", 400);
+      throw new HttpError("Password is incorrect", 400);
     }
 
     const payload = {
@@ -87,12 +95,19 @@ const logInUser = async (req, res) => {
     const options = {
       expiresIn: "1h",
     };
+    const expiresIn = 3600;
 
     const token = jwt.sign(payload, process.env.JWT_SECRET, options);
+    //const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    //console.log(decoded);
 
-    return res
-      .status(200)
-      .json({ user, token, message: "The login was succesfull" });
+    return res.status(200).json({
+      user,
+      token,
+      expiresIn: expiresIn,
+      message: "The login was succesfull",
+      //decoded: decoded,
+    });
   } catch (error) {
     const statusCode = error.statusCode || 500;
     return res.status(statusCode).json({ message: error.message });
@@ -145,7 +160,7 @@ const getProfile = async (req, res) => {
 
 const updateProfile = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, email, password, currentPassword } = req.body;
 
     if (name) {
       const userN = await User.findOne({ where: { name: name } });
@@ -158,6 +173,20 @@ const updateProfile = async (req, res) => {
       const userE = await User.findOne({ where: { email: email } });
       if (userE) {
         throw new HttpError("Email is not available", 400);
+      }
+    }
+
+    if (currentPassword) {
+      const isMatch = await bcrypt.compare(currentPassword, req.user.password);
+      if (!isMatch) {
+        throw new HttpError("The current password is incorrect", 400);
+      }
+    }
+
+    if (password) {
+      const isMatch = await bcrypt.compare(password, req.user.password);
+      if (isMatch) {
+        throw new HttpError("Already have that password", 400);
       }
     }
 

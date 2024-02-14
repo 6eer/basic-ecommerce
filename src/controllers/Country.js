@@ -9,7 +9,9 @@ class HttpError extends Error {
 
 const getCountries = async (req, res) => {
   try {
-    const countries = await Country.findAll();
+    const countries = await Country.findAll({
+      order: [["name", "ASC"]],
+    });
     return res.status(200).json(countries);
   } catch (error) {
     const statusCode = error.statusCode || 500;

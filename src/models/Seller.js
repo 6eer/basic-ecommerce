@@ -8,6 +8,13 @@ const Seller = sequelize.define("sellers", {
     primaryKey: true,
     autoIncrement: true,
   },
+  name: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    validate: {
+      len: [1, 10000],
+    },
+  },
   sales: {
     type: DataTypes.INTEGER,
     defaultValue: 0,

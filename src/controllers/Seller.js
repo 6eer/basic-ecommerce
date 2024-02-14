@@ -1,6 +1,7 @@
 const Seller = require("../models/Seller");
-const User = require("../models/User");
+//const User = require("../models/User");
 const Product = require("../models/Product");
+const Country = require("../models/Country");
 
 class HttpError extends Error {
   constructor(message, statusCode) {
@@ -19,19 +20,50 @@ const getSeller = async (req, res) => {
   }
 };
 
+/*
+const getSellerByCountry = async (req, res) => {
+  try {
+    const country = req.query.country;
+    const sellers = await Seller.findAll({ where: { country: country } });
+
+    return res.status(200).json(sellers);
+  } catch (error) {
+    const statusCode = error.statusCode || 500;
+    return res.status(statusCode).json({ message: error.message });
+  }
+};
+*/
+
+const getSellerByCountryId = async (req, res) => {
+  try {
+    const countryId = req.query.countryId;
+    const sellers = await Seller.findAll({
+      where: { countryId: countryId },
+      order: [["name", "ASC"]],
+    });
+
+    return res.status(200).json(sellers);
+  } catch (error) {
+    const statusCode = error.statusCode || 500;
+    return res.status(statusCode).json({ message: error.message });
+  }
+};
+
 const createSeller = async (req, res) => {
   try {
-    const { sales, userId } = req.body;
+    const { name, sales, country, countryId } = req.body;
 
-    const user = await User.findByPk(userId);
+    const country2 = await Country.findByPk(countryId);
 
-    if (!user) {
-      throw new HttpError("User not found", 404);
+    if (!country2) {
+      throw new HttpError("Not a valid CountryID", 404);
     }
 
     const newSeller = await Seller.create({
-      userId: userId,
+      name: name,
+      country: country,
       sales: sales,
+      countryId: countryId,
     });
 
     return res.status(201).json(newSeller);
@@ -72,6 +104,8 @@ const deleteSeller = async (req, res) => {
 
 module.exports = {
   getSeller,
+  //getSellerByCountry,
+  getSellerByCountryId,
   createSeller,
   deleteSeller,
 };
