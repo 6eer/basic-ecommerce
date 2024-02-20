@@ -112,6 +112,7 @@ const confirmPurchase = async (req, res) => {
         productName: cartItem.productName,
         productPrice: cartItem.productPrice,
         quantity: cartItem.quantity,
+        productImageUrl: cartItem.productImageUrl,
       });
       await cartItem.destroy();
     }

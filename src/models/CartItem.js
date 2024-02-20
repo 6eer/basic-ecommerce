@@ -35,6 +35,9 @@ const CartItem = sequelize.define("cartItems", {
     type: DataTypes.INTEGER,
     defaultValue: 1,
   },
+  productImageUrl: {
+    type: DataTypes.STRING,
+  },
 });
 
 Cart.hasMany(CartItem, { foreignKey: "cartId" });

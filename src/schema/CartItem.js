@@ -18,6 +18,9 @@ const cartItemSchema = {
       type: "integer",
       minimum: 1,
     },
+    productImageUrl: {
+      type: "string",
+    },
   },
   required: [
     "productId",
@@ -25,6 +28,7 @@ const cartItemSchema = {
     "productName",
     "productPrice",
     "productStock",
+    "productImageUrl",
   ],
   additionalProperties: false,
 };

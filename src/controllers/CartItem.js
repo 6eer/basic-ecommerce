@@ -54,8 +54,14 @@ const getCartItemsByCartId = async (req, res) => {
 const addToCart = async (req, res) => {
   try {
     //Cuando toco el boton ADD en el front, tengo que agregar a la request el productId y la cantidad.
-    const { productId, productName, productPrice, productStock, quantity } =
-      req.body;
+    const {
+      productId,
+      productName,
+      productPrice,
+      productStock,
+      quantity,
+      productImageUrl,
+    } = req.body;
     //Como la request pasa el auth, obtenemos el id del token.
     const id = req.user.id;
 
@@ -131,6 +137,7 @@ const addToCart = async (req, res) => {
         productPrice: productPrice,
         productStock: productStock,
         quantity: quantity,
+        productImageUrl: productImageUrl,
       });
       return res.status(201).json(newCartitem);
     }

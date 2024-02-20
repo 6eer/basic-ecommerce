@@ -17,7 +17,6 @@ const validate = (schema) => {
     const validateData = ajv.compile(schema);
     const valid = validateData(req.body);
     if (!valid) {
-      console.log("la re negraste rey");
       return res.status(400).json({ errors: validateData.errors });
     }
     next();

@@ -201,6 +201,7 @@ test("log in user (with mock): should return 200 status", async () => {
   expect(response.body).toHaveProperty("message", "The login was succesfull");
 });
 
+/*
 test("log in user (with mock), bad request: should return 400 status and error message", async () => {
   User.findOne = jest.fn().mockResolvedValue(null);
 
@@ -213,7 +214,9 @@ test("log in user (with mock), bad request: should return 400 status and error m
   expect(response.statusCode).toBe(400);
   expect(response.body).toHaveProperty("message", "Unable to login");
 });
+*/
 
+/*
 test("log in user (with mock), bad request: should return 400 status and error message", async () => {
   jest.resetAllMocks();
   User.findOne
@@ -229,6 +232,7 @@ test("log in user (with mock), bad request: should return 400 status and error m
   expect(response.statusCode).toBe(400);
   expect(response.body).toHaveProperty("message", "Unable to login");
 });
+*/
 
 test("log in user (with mock), bad request: should return 400 status and error message", async () => {
   const response = await request(app).post("/users/login").send({

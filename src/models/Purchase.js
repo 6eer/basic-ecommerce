@@ -22,7 +22,7 @@ const Purchase = sequelize.define("purchases", {
     type: DataTypes.STRING,
     allowNull: false,
     validate: {
-      len: [1, 100],
+      len: [1, 100000],
     },
     defaultValue: "Unknown",
   },
@@ -33,6 +33,9 @@ const Purchase = sequelize.define("purchases", {
   quantity: {
     type: DataTypes.INTEGER,
     defaultValue: 1,
+  },
+  productImageUrl: {
+    type: DataTypes.STRING,
   },
 });
 

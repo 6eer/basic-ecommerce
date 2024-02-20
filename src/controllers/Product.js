@@ -76,7 +76,7 @@ const getProductsBySellerByPriceHighToLow = async (req, res) => {
 
 const createProduct = async (req, res) => {
   try {
-    const { name, price, stock, description, sellerId } = req.body;
+    const { name, price, stock, description, sellerId, imageUrl } = req.body;
 
     const seller = await Seller.findByPk(sellerId);
 
@@ -90,6 +90,7 @@ const createProduct = async (req, res) => {
       stock: stock,
       description: description,
       sellerId: sellerId,
+      imageUrl: imageUrl,
     });
 
     return res.status(201).json(newProduct);

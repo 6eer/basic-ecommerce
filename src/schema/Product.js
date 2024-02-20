@@ -21,6 +21,10 @@ const productSchema = {
       type: "integer",
       minimum: 1,
     },
+    imageUrl: {
+      type: "string",
+      minLength: 1,
+    },
   },
   required: ["sellerId", "name"],
   additionalProperties: false,

@@ -28,6 +28,10 @@ const Product = sequelize.define("products", {
   description: {
     type: DataTypes.STRING,
   },
+  imageUrl: {
+    type: DataTypes.STRING,
+    allowNull: true, // Permitir que la imagen sea nula si no está disponible
+  },
 });
 
 Product.hasMany(Review, {
