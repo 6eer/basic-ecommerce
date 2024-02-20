@@ -52,12 +52,14 @@ Additionally, the Docker Compose has defined a volume, which ensures that the in
 
 - If you opt for the local version, you should use:
   - npm install
-  - npm run startLocal 
+  - npm run startLocal
+    
 Once the app is up and running, you can view the results at: [http://localhost:3000](http://localhost:3000)
 
 - If you opt for the Docker version, you should use: 
   - docker-compose build
   - docker-compose up
+    
 Once the app is up and running, you can view the results at: [http://localhost:3000](http://localhost:3000)
 
 ## Sample video
