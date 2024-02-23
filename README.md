@@ -64,4 +64,4 @@ Once the app is up and running, you can view the results at: [http://localhost:3
 
 ## Sample video
 
-- https://www.youtube.com/watch?v=y94WfDrs1wM
+- https://www.youtube.com/watch?v=nfSnooEZ1Ys
